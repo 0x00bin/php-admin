@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <title>登录 - {:C('SITE_TITLE')}</title>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Min/?f=__PUBLIC__/stylesheets/admin/base.css|__PUBLIC__/javascripts/admin/asyncbox/skins/default.css" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Min/?f=__PUBLIC__/css/base.css|__PUBLIC__/js/asyncbox/skins/default.css" />
 </head>
 
 <body class="loginWeb">
     <div class="loginBox">
         <div class="innerBox">
-            <div class="logo"> <img src="__PUBLIC__/images/admin/logo.png" /></div>
+            <div class="logo"> <img src="__PUBLIC__/images/logo.png" /></div>
             <form>
                 <div class="loginInfo">
                     <ul>
@@ -18,12 +18,12 @@
                     </ul>
                     <ul>
                         <li class="row1">登录密码：</li>
-                        <li class="row2"><input class="input" name="password" id="pwd" size="30" type="password" /></li>
+                        <li class="row2"><input class="input" name="password" id="pwd" size="30" type="password" onkeydown="onEnterLogin(event)"/></li>
                     </ul>
-                    <ul>
+                    <!-- ul>
                         <li class="row1">验证码：</li>
                         <li class="row2"><input class="input" id="verify_code" name="verify_code" type="text" style="width:70px;" /> <img src="{:U('Public/verifyCode')}"  title="看不清？单击此处刷新" onclick="this.src+='?rand='+Math.random();"  style="cursor: pointer; vertical-align: middle;"/></li>
-                    </ul>
+                    </ul -->
                 </div>
             </form>
             <div class="clear"></div>
@@ -31,29 +31,31 @@
         </div>
     </div>
 
-    <include file="Common/javascripts" />
-    <script type="text/javascript">
-        $(function(){
-            // 登录
-            $(".submit").click(function(){
-                if($("#email").val() == ''
-                   || $("#pwd").val() == ''
-                   || $("#verify_code").val() == ''){
-                    popup.alert("请填写完整的表单后进行登录！");
-                    return false;
-                }
-                commonAjaxSubmit("{:U('Public/login')}");
-            });
+    <include file="javascripts.html" />
+<script type="text/javascript">
+function login () {
+    if($("#email").val() == '' || $("#pwd").val() == ''){
+        popup.alert("请填写完整的表单后进行登录！");
+        return false;
+    }
 
-            // 找回密码
-            $(".findPwd").click(function() {
-                if($("#email").val() == ''){
-                    popup.alert("请填需要找回密码的登录邮箱！");
-                    return false;
-                }
-                commonAjaxSubmit("{:U('Public/sendFindPwdMail')}");
-            });
-        });
-    </script>
+    ajax_submit("{:U('System/Public/login')}", false, function(data) {
+        top.window.location.href = data.url;
+    });
+}
+function onEnterLogin(e) {
+    if (e.keyCode == 13) {
+        e.returnValue=false;
+        e.cancel = true;
+        login();
+    }
+}
+$(function(){
+    // 登录
+    $(".submit").click(function() {
+        login();
+    });
+});
+</script>
 </body>
 </html>

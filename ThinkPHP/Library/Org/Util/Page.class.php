@@ -12,7 +12,7 @@
 namespace Org\Util;
 
 class Page {
-    
+
     // 分页栏每页显示的页数
     public $rollPage = 5;
     // 页数跳转时要带的参数
@@ -43,7 +43,7 @@ class Page {
      * @param array $listRows  每页显示记录数
      * @param array $parameter  分页跳转的参数
      */
-    public function __construct($totalRows,$listRows='',$varPage,$parameter='',$url='') {
+    public function __construct($totalRows,$listRows='',$varPage='p',$parameter='',$url='') {
         $this->totalRows    =   $totalRows;
         $this->parameter    =   $parameter;
         $this->varPage      =   isset($varPage) ? $varPage : 'p' ;

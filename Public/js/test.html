@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>系统发生错误</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+<meta name="Generator" content="EditPlus"/>
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+
+</head>
+<body>
+<select id="command_type" name="data[command_type]" onchange="" ondblclick="" class="">
+    <option value="1">单个指令</option>
+    <option selected="selected" value="2">指令集</option>
+</select>
+<input type="checkbox" id="cb1" name="" value="" />
+</body>
+</html>
+
+<script type="text/javascript">
+    var o = $("#cb1");
+    var type = o.get(0).type;
+
+    alert(type);
+</script>

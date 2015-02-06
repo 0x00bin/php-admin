@@ -1,0 +1,48 @@
+<input id="curr_command_id" name="curr_command_id" type="hidden" value="{$vo.command_id|default=''}" />
+<input id="curr_device_id" name="curr_device_id" type="hidden" value="{$vo.device_id|default=''}" />
+<input id="curr_cron_time" name="curr_cron_time" type="hidden" value="{$vo.time|default=''}" />
+<script type="text/javascript">
+$(document).ready( function() {
+    var command_sc = SelectChanger.create("command_id", "command_type");
+    command_sc.init();
+
+    var device_sc = SelectChanger.create("device_id", "device_type");
+    device_sc.init();
+
+    var type_sc = SelectChanger.create("time", "type", PRF_MOD + "&act=select&dname=cron_times&",
+        function(datas) {
+            if($("#cron_time").length == 0) {
+                $("#time").after('<select id="cron_time" name="data[time]"></select> ');
+                type_sc.create_select($("#cron_time"), datas);
+                var value = $('#curr_cron_time').val();
+                if (value != "" && value.indexOf(":") == -1) {
+                    $("#cron_time option[value="+$('#curr_cron_time').val()+"]").attr("selected",true);
+		        }
+            }
+        }
+    );
+    type_sc.init(function(type) {
+        if (type == 1) { // 普通任务
+            $("#tr_time").hide();
+        } else if (type == 2) { // 循环任务
+            $("#tr_time").show();
+            $("#time").hide();
+            $("#time").attr("disabled", "disabled");
+            if($("#cron_time").length > 0) {
+                $("#cron_time").show();
+                $("#cron_time").removeAttr("disabled");
+            } else {
+                type_sc.request_url();
+            }
+        } else if (type == 3) { // 定时任务
+            $("#tr_time").show();
+            $("#time").show();
+            $("#time").removeAttr("disabled");
+            if($("#cron_time").length > 0) {
+                $("#cron_time").hide();
+                $("#cron_time").attr("disabled", "disabled");
+            }
+        }
+    });
+});
+</script>

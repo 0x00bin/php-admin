@@ -1,0 +1,16 @@
+        <tr>
+            <th width="80">导入说明：</th>
+            <td>
+                <a style="cursor: pointer;" onclick="show();">查看说明</a>
+            </td>
+        </tr>
+        <script>
+            function show() {
+                asyncbox.html({
+                    title : "导入说明",
+                    modal : true,                     
+                    content : document.getElementById("specification")
+                });
+        
+            }    
+        </script>

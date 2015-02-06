@@ -4,13 +4,13 @@ namespace System\Service;
 /**
  * NodeService
  */
-class NodeService extends CommonService {
+class NodeService extends \Libs\Framework\Service {
     /**
      * 节点类型
      * @var array
      */
-    private $NODE_TYPE = array(
-        1 => '应用（GROUP）',
+    private $node_types = array(
+        1 => '应用（APP）',
         2 => '模块（MODULE）',
         3 => '操作（ACTION）'
     );
@@ -20,8 +20,8 @@ class NodeService extends CommonService {
      * @return array
      */
     public function getNodes() {
-        $category = new \Org\Util\Category($this->getModelName(),
-                                           array('id', 'pid','title'));
+        $category = new \Org\Util\Category("Node", array('id', 'pid','title'));
+
         return $category->getList();
     }
 
@@ -30,13 +30,13 @@ class NodeService extends CommonService {
      * @param  array  $where 查询条件
      * @return array
      */
-    public function getGroupNodes(array $where) {
+    public function getGroupNodes(array $where = array()) {
         if (!isset($where) || !is_array($where)) {
             $where = array();
         }
 
         $map = array('level' => 1);
-        return $this->getM()->where(array_merge($map, $where))->select();
+        return $this->_model->where(array_merge($map, $where))->select();
     }
 
     /**
@@ -50,7 +50,7 @@ class NodeService extends CommonService {
         }
 
         $map = array('level' => 2);
-        return $this->getM()->where(array_merge($map, $where))->select();
+        return $this->_model->where(array_merge($map, $where))->select();
     }
 
     /**
@@ -64,7 +64,7 @@ class NodeService extends CommonService {
         }
 
         $map = array('level' => 3);
-        return $this->getM()->where(array_merge($map, $where))->select();
+        return $this->_model->where(array_merge($map, $where))->select();
     }
 
     /**
@@ -76,6 +76,7 @@ class NodeService extends CommonService {
         foreach ($groups as $i => $group) {
             $where['pid'] = $group['id'];
             $modules = $this->getModuleNodes($where);
+            if (empty($modules)) $modules = array();
             foreach ($modules as $j => $module) {
                 $where['pid'] = $module['id'];
                 $actions = $this->getActionNodes($where);
@@ -84,7 +85,6 @@ class NodeService extends CommonService {
 
             $groups[$i]['modules'] = $modules;
         }
-
         return $groups;
     }
 
@@ -94,7 +94,7 @@ class NodeService extends CommonService {
      * @return string
      */
     public function getNodeType($type) {
-        return $this->NODE_TYPE[$type];
+        return $this->node_types[$type];
     }
 
     /**
@@ -104,15 +104,13 @@ class NodeService extends CommonService {
      * @return boolean
      */
     public function addModuleNodes($name, $ctrlName) {
-        $Node = $this->getM();
-
         // 得到顶级节点的id
-        $pNode = $Node->field('id')->getByPid(0);
+        $pNode = $this->_model->field('id')->getByPid(0);
         if (is_null($pNode)) {
             return false;
         }
 
-        $Node->startTrans();
+        $this->_model->startTrans();
         $node = array(
             'status' => 1,
             'created' => time(),
@@ -126,10 +124,10 @@ class NodeService extends CommonService {
             'name' => $ctrlName,
             'level' => 2
         );
-        $ms = $Node->add(array_merge($mNode, $node));
+        $ms = $this->_model->add(array_merge($mNode, $node));
 
         // 模块id
-        $pid = $this->getM()->getLastInsId();
+        $pid = $this->_model->getLastInsId();
         // 操作节点
         $node['pid'] = $pid;
         $node['level'] = 3;
@@ -156,13 +154,13 @@ class NodeService extends CommonService {
             array_merge($node, $delete)
         );
 
-        $ns = $Node->addAll($nodes);
+        $ns = $this->_model->addAll($nodes);
         if (false === $ms || false === $ns) {
-            $Node->rollback();
+            $this->_model->rollback();
             return false;
         }
 
-        $Node->commit();
+        $this->_model->commit();
         return true;
     }
 
@@ -172,15 +170,14 @@ class NodeService extends CommonService {
      * @return boolean
      */
     public function deleteModuleNodes($ctrlName) {
-        $Node = $this->getM();
-        $mNode = $Node->field('id')->getByName($ctrlName);
+        $data = $this->_model->field('id')->getByName($ctrlName);
 
-        if (is_null($mNode)) {
+        if (empty($data)) {
             return false;
         }
 
-        $Node->delete($mNode['id']);
-        $Node->where("pid={$mNode['id']}")->delete();
+        $this->_model->delete($data['id']);
+        $this->_model->where("pid={$data['id']}")->delete();
 
         return true;
     }
@@ -192,22 +189,15 @@ class NodeService extends CommonService {
      * @return mixed
      */
     public function setStatus($id, $status) {
-        return $this->getM()
+        return $this->_model
                     ->where("id={$id}")
                     ->save(array('status' => $status));
     }
 
-    /**
-     * 节点是否存在
-     * @param  int     $id 节点id
-     * @return boolean
-     */
-    public function existNode($id) {
-        $node = $this->getM()->getById($id);
-        return !empty($node);
-    }
-
-    protected function getModelName() {
-        return 'Node';
+     // `id`, `pid`, `name`, `title`, `level`, `status`, `created`, `updated`
+     function addNode($data) {
+        $data['status'] = 1;
+        $data['created'] = date("Y-m-d H:i:s");
+        return $this->_model->add($data);
     }
 }

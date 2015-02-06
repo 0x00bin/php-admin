@@ -132,7 +132,8 @@ class Dispatcher {
         }
 
         // URL常量
-        define('__SELF__',strip_tags($_SERVER[C('URL_REQUEST_URI')]));
+        $URL_REQUEST_URI = isset($_SERVER[C('URL_REQUEST_URI')])? $_SERVER[C('URL_REQUEST_URI')]:"/";
+        define('__SELF__',strip_tags($URL_REQUEST_URI));
 
         // 获取模块名称
         define('MODULE_NAME', defined('BIND_MODULE')? BIND_MODULE : self::getModule($varModule));
@@ -245,6 +246,10 @@ class Dispatcher {
 
         //保证$_REQUEST正常取值
         $_REQUEST = array_merge($_POST,$_GET);
+
+        if(is_file(COMMON_PATH.'Common/_init.php')) {
+            include COMMON_PATH.'Common/_init.php';
+        }
     }
 
     /**

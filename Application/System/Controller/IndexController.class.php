@@ -42,14 +42,18 @@ class IndexController extends \Libs\Framework\Controller {
         );
 
         $this->assign('info', $info);
-        $this->display();
+        if (IS_AJAX || !C('PRF_MODE')) {
+            $this->display("index");
+        } else {
+            $this->display("all_index");
+        }
     }
 
     /**
      * 编辑个人密码
      * @return
      */
-    public function editPassword() {
+    public function edit() {
         $this->display('edit_password');
     }
 
@@ -57,23 +61,27 @@ class IndexController extends \Libs\Framework\Controller {
      * 更新个人密码
      * @return
      */
-    public function updatePassword() {
-        if (!isset($_POST['admin'])) {
-            return $this->error('无效的操作！');
+    public function update() {
+        $password = $this->getRequest('password', '', true);
+        $cfm_password = $this->getRequest('cfm_password', '', true);
+        if (empty($_SESSION['user']['id'])) {
+            return $this->error('请先登录');
         }
 
         $user = $_SESSION['user'];
-        $password = $this->getRequest('password', '', true);
-        $cfm_password = $this->getRequest('cfm_password', '', true);
+
         if ($password !== $cfm_password) {
             $this->error("两次输入的密码不一致！");
         }
         $data = array(
             'id'       => $user['id'],
-            'password' => $password
+            'name'     => $user['name'],
+            'password' => $password,
+            'cfm_password' => $cfm_password,
+            'status' => 1
         );
-        $service = D('User', 'Service');
-        if ( false === $service->update($data)) {
+        $service = D('System/User', 'Service');
+        if ( false === $service->save($data)) {
             return $this->error($service->getError());
         }
 

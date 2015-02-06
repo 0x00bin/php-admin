@@ -1,0 +1,76 @@
+<assign name="import_tpl_url" value="__PUBLIC__/data/device_import.csv" />
+<assign name="has_charset" value="true" />
+<assign name="title" value="设备" />
+<assign name="has_import_ext" value="true" />
+<include file="import_form.html" />
+    
+    
+        <div id="specification" style="display:none;">
+        <table border="0" cellspacing="0" cellpadding="0" class="tab" >
+        <thead>
+            <tr>
+                <th>字段名</th>                
+                <th>字段含义</th>
+                <th>取值范围</th>
+                <th>值含义</th>
+            </tr>
+        </thead>
+        <tbody>            
+            <tr align="center">
+                <td>name</td>         
+                <td>设备名称</td>         
+                <td></td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>type</td>         
+                <td>设备类型</td>         
+                <td>1,2</td>
+                <td>1: Linux, 2: Mysql</td>
+            </tr>
+            
+            <tr align="center">
+                <td>host</td>         
+                <td>主机地址</td>         
+                <td></td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>conn_type</td>         
+                <td>连接方式</td>         
+                <td>1,2,3</td>
+                <td>1: SSH2, 2: Telnet, 3: Mysql</td>
+            </tr>
+            <tr align="center">
+                <td>port</td>         
+                <td>连接端口</td>         
+                <td></td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>user</td>         
+                <td>连接用户</td>         
+                <td></td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>pass</td>         
+                <td>连接密码</td>         
+                <td></td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>user_id</td>         
+                <td>负责人ID</td>         
+                <td>系统管理/用户列表里对应用户的编号</td>
+                <td></td>
+            </tr>
+            <tr align="center">
+                <td>remark</td>         
+                <td>描述信息</td>         
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>

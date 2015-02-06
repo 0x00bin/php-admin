@@ -83,7 +83,7 @@ class Db {
             $class  =   $db_config['dbms'];
         }else{
             $dbType =   ucwords(strtolower($db_config['dbms']));
-            $class  =   'Think\\Db\\Driver\\'. $dbType;            
+            $class  =   'Think\\Db\\Driver\\'. $dbType;
         }
         // 检查驱动类
         if(class_exists($class)) {
@@ -175,7 +175,7 @@ class Db {
     protected function multiConnect($master=false) {
         foreach ($this->config as $key=>$val){
             $_config[$key]      =   explode(',',$val);
-        }        
+        }
         // 数据库读写是否分离
         if(C('DB_RW_SEPARATE')){
             // 主从式采用读写分离
@@ -202,7 +202,7 @@ class Db {
             'database'  =>  isset($_config['database'][$r])?$_config['database'][$r]:$_config['database'][0],
             'dsn'       =>  isset($_config['dsn'][$r])?$_config['dsn'][$r]:$_config['dsn'][0],
             'params'    =>  isset($_config['params'][$r])?$_config['params'][$r]:$_config['params'][0],
-            'charset'   =>  isset($_config['charset'][$r])?$_config['charset'][$r]:$_config['charset'][0],            
+            'charset'   =>  isset($_config['charset'][$r])?$_config['charset'][$r]:$_config['charset'][0],
         );
         return $this->connect($db_config,$r);
     }
@@ -325,7 +325,7 @@ class Db {
     protected function parseKey(&$key) {
         return $key;
     }
-    
+
     /**
      * value分析
      * @access protected
@@ -425,7 +425,7 @@ class Db {
             foreach ($where as $key=>$val){
                 if(is_numeric($key)){
                     $key  = '_complex';
-                }                    
+                }
                 if(0===strpos($key,'_')) {
                     // 解析特殊条件表达式
                     $whereStr   .= $this->parseThinkWhere($key,$val);
@@ -480,7 +480,7 @@ class Db {
                             foreach ($val[1] as $item){
                                 $like[] = $key.' '.$likeStr.' '.$this->parseValue($item);
                             }
-                            $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';                          
+                            $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';
                         }
                     }else{
                         $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
@@ -505,7 +505,7 @@ class Db {
                 }
             }else {
                 $count = count($val);
-                $rule  = isset($val[$count-1]) ? (is_array($val[$count-1]) ? strtoupper($val[$count-1][0]) : strtoupper($val[$count-1]) ) : '' ; 
+                $rule  = isset($val[$count-1]) ? (is_array($val[$count-1]) ? strtoupper($val[$count-1][0]) : strtoupper($val[$count-1]) ) : '' ;
                 if(in_array($rule,array('AND','OR','XOR'))) {
                     $count  = $count -1;
                 }else{
@@ -697,7 +697,7 @@ class Db {
                 $this->bindParam($name,$val);
               }else{
                 $values[]   =  $this->parseValue($val);
-              }                
+              }
             }
         }
         $sql   =  ($replace?'REPLACE':'INSERT').' INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
@@ -830,7 +830,7 @@ class Db {
     }
 
     /**
-     * 获取最近一次查询的sql语句 
+     * 获取最近一次查询的sql语句
      * @param string $model  模型名
      * @access public
      * @return string

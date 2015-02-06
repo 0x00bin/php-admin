@@ -100,7 +100,8 @@ class Rbac {
 	}
 
     //检查当前操作是否需要认证
-    static function checkAccess() {
+    static function checkAccess($act=ACTION_NAME) {
+        $act = strtoupper($act);
         //如果项目要求认证，并且当前模块需要认证，则进行权限认证
         if( C('USER_AUTH_ON') ){
 			$_module	=	array();
@@ -121,8 +122,9 @@ class Rbac {
 					//无需认证的操作
 					$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));
 				}
+
 				//检查当前操作是否需要认证
-				if((!empty($_action['no']) && !in_array(strtoupper(ACTION_NAME),$_action['no'])) || (!empty($_action['yes']) && in_array(strtoupper(ACTION_NAME),$_action['yes']))) {
+				if((!empty($_action['no']) && !in_array($act,$_action['no'])) || (!empty($_action['yes']) && in_array($act,$_action['yes']))) {
 					return true;
 				}else {
 					return false;
@@ -155,11 +157,19 @@ class Rbac {
 	}
 
     //权限认证的过滤器方法
-    static public function AccessDecision($appName=MODULE_NAME) {
+    static public function AccessDecision($appName=MODULE_NAME, $actName=ACTION_NAME) {
         //检查是否需要认证
-        if(self::checkAccess()) {
+        $action_alias = C('ACTION_ALIAS');
+        $actName = strtoupper($actName);
+		if (is_array($action_alias) && isset($action_alias[$actName])) {
+            $actName = $action_alias[$actName];
+		}
+
+        if(self::checkAccess($actName)) {
+
             //存在认证识别号，则进行进一步的访问决策
             $accessGuid   =   md5($appName.CONTROLLER_NAME.ACTION_NAME);
+
             if(empty($_SESSION[C('ADMIN_AUTH_KEY')])) {
                 if(C('USER_AUTH_TYPE')==2) {
                     //加强验证和即时验证模式 更加安全 后台权限修改可以即时生效
@@ -173,15 +183,16 @@ class Rbac {
                     //登录验证模式，比较登录后保存的权限访问列表
                     $accessList = $_SESSION['_ACCESS_LIST'];
                 }
+
                 //判断是否为组件化模式，如果是，验证其全模块名
-                if(!isset($accessList[strtoupper($appName)][strtoupper(CONTROLLER_NAME)][strtoupper(ACTION_NAME)])) {
+                if(!isset($accessList[strtoupper($appName)][strtoupper(CONTROLLER_NAME)][$actName])) {
                     $_SESSION[$accessGuid]  =   false;
                     return false;
                 }
                 else {
                     $_SESSION[$accessGuid]	=	true;
                 }
-            }else{
+            } else {
                 //管理员无需认证
 				return true;
 			}

@@ -1,0 +1,1 @@
+ALTER TABLE `ins_result` ADD `host` CHAR(15) NOT NULL DEFAULT '' AFTER `command_id`;

@@ -1,5 +1,5 @@
 <div class="Item hr">
-    <div class="current">权限分配</div>
+    <div id="sub_name" class="current">权限分配</div>
 </div>
 <p>您正在为角色：<b>{$role.name}</b> 分配权限，项目和模块有全选和取消全选功能</p>
 <form>
@@ -82,7 +82,7 @@
             $("input[type='checkbox']").prop("checked",false);
         });
         $(".submit").click(function(){
-            commonAjaxSubmit("{:U('Role/doAssignAccess')}");
+            ajax_submit("{:U('System/Role/saveAccess')}");
         });
     });
 </script>

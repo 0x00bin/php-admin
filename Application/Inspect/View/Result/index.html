@@ -1,0 +1,30 @@
+<include file="list.html" />
+<form target="_blank" method="POST" id="export_form">
+<div class="commonBtnArea" style="width: 1014px;">
+    <input type="submit" class="btn submit" value="导出"/>
+    
+</div>
+</form>    
+
+<script type="text/javascript">
+
+function doexport(){ 
+    var params = getUrlParams();
+    var data = [];    
+    for(var i in params) {
+        if (i == "app" || i == "mod" || i == "act" || i == "_search") {
+            continue;    
+        }
+        data.push(i + "="+ params[i]);        
+    }
+    
+    $("#export_form").attr("action", MOD + "&act=export&" + data.join("&"));
+    return true;
+}
+
+$(document).ready(function() {
+    $("#export_form").submit(function() {
+        doexport();
+    });        
+});
+</script>

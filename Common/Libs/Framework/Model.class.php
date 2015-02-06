@@ -1,46 +1,43 @@
 <?php
 namespace Libs\Framework;
 
-use Think\Model\RelationModel;
 
 /**
  * CommonModel
  * 数据库、数据表信息操作
  */
-class Model extends RelationModel {
-
-    // TODO 读取相应的配置文件
-	protected $connection = ''; //'mysql://root:@localhost/ams';
-	protected $autoCheckFields = false;
+class Model extends \Think\Model {
+    protected $connection = ''; //'mysql://root:@localhost/ams';
+    protected $autoCheckFields = false;
     protected $tablePrefix = '';
     protected $tableSuffix = '';
     protected $_dir = "";
 
-	public function setTableName($name) {
-	    $this->name = $name;
-		$this->trueTableName = $this->tablePrefix . $name . $this->tableSuffix;
-		return $this;
-	}
+    public function setTableName($name) {
+        $this->name = $name;
+        $this->trueTableName = $this->tablePrefix . $name . $this->tableSuffix;
+        return $this;
+    }
 
     public function setTrueTableName($name) {
-		$this->trueTableName = $name;
-		return $this;
-	}
+        $this->trueTableName = $name;
+        return $this;
+    }
 
     // TODO 是否是同一个数据连接用于区分是否单独开启事务
     public function isSameConnect() { return empty($this->connection); }
 
     public function getConfig() {
-        $api_config_path = $this->_dir .'/../Conf/config.php';
-        if ( !file_exists($api_config_path) ) {
-            \Think\Log::write( $api_config_path.' not exists!');
-            throw new \Think\Exception($api_config_path.' not exists!');
+        $config_path = $this->_dir .'/../Conf/config.php';
+        if ( !file_exists($config_path) ) {
+            \Think\Log::write( $config_path.' not exists!');
+            throw new \Think\Exception($config_path.' not exists!');
         }
-        return require $api_config_path;
+        return require $config_path;
     }
 
     public function getTableCols() {
-	    $this->_checkTableInfo();
+        $this->_checkTableInfo();
         $result = $this->fields;
         unset($result['_autoinc']);
         unset($result['_pk']);
@@ -50,8 +47,8 @@ class Model extends RelationModel {
 
     protected function _initialize() {
         if ( empty($this->_dir) ) {
-	        die('please set protected $_dir = __DIR__;');
-	    }
+            die('please set protected $_dir = __DIR__;');
+        }
         // compare db config
         $api_configs = $this->getConfig();
 
@@ -97,5 +94,26 @@ class Model extends RelationModel {
     public function insertAll($datas, $options=array()) {
         $options['table'] = $this->trueTableName;
         return $this->db->insertAll($datas, $options);
+    }
+
+     // 获取指定ID的一条记录
+    public function getDataById($id, $cols='*') {
+        return $this->getDataByWhere("id='{$id}'", $cols);
+    }
+
+    public function getDataByWhere($where, $cols='*') {
+        return $this->find(array(
+            'field' => $cols,
+            'where' => $where,
+        ));
+    }
+
+    public function getDatasByWhere($where, $cols="*") {
+        $options = array(
+            'where' => $where,
+            'field' => $cols,
+        );
+
+        return $this->select($options);
     }
 }

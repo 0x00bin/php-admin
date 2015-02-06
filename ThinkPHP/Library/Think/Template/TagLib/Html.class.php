@@ -114,6 +114,24 @@ class Html extends TagLib{
         return $parseStr;
     }
 
+    public function _php_var($var) {
+        $pos = strpos($var, "$");
+        if ( $pos !== false) {
+            if ($pos === 0) {
+                return '<?php echo '.$var.'; ?>';
+            }
+            $s_pos = strpos($var, "[");
+            $e_pos = strpos($var, "]");
+            if ( $s_pos !== false && $e_pos !== false) {
+                $newvar = substr($var, $s_pos + 1, $e_pos - $s_pos - 1);
+                $php_var = $this->_php_var($newvar);
+
+                return str_replace($newvar, $php_var, $var);
+            }
+        }
+        return $var;
+    }
+
     /**
      * select标签解析
      * 格式： <html:select options="name" selected="value" />
@@ -122,19 +140,19 @@ class Html extends TagLib{
      * @return string|void
      */
     public function _select($tag) {
-        $name       = $tag['name'];
+        $name       = $this->_php_var($tag['name']);
         $options    = $tag['options'];
         $values     = $tag['values'];
         $output     = $tag['output'];
         $multiple   = $tag['multiple'];
-        $id         = $tag['id'];
+        $id         = $this->_php_var($tag['id']);
         $size       = $tag['size'];
         $first      = $tag['first'];
         $selected   = $tag['selected'];
         $style      = $tag['style'];
         $ondblclick = $tag['dblclick'];
 		$onchange	= $tag['change'];
-//var_dump($tag);exit;
+
         if(!empty($multiple)) {
             $parseStr = '<select id="'.$id.'" name="'.$name.'" ondblclick="'.$ondblclick.'" onchange="'.$onchange.'" multiple="multiple" class="'.$style.'" size="'.$size.'" >';
         }else {
@@ -143,15 +161,17 @@ class Html extends TagLib{
         if(!empty($first)) {
             $parseStr .= '<option value="" >'.$first.'</option>';
         }
+
+
         if(!empty($options)) {
-            $parseStr   .= '<?php  foreach($'.$options.' as $key=>$val) { ?>';
+            $parseStr   .= '<?php  foreach($'.$options.' as $_key=>$val) { ?>';
             if(!empty($selected)) {
-                $parseStr   .= '<?php if(!empty($'.$selected.') && ($'.$selected.' == $key || in_array($key,$'.$selected.'))) { ?>';
-                $parseStr   .= '<option selected="selected" value="<?php echo $key ?>"><?php echo $val ?></option>';
-                $parseStr   .= '<?php }else { ?><option value="<?php echo $key ?>"><?php echo $val ?></option>';
+                $parseStr   .= '<?php if(!empty($'.$selected.') && ($'.$selected.' == $_key || in_array($_key,$'.$selected.'))) { ?>';
+                $parseStr   .= '<option selected="selected" value="<?php echo $_key ?>"><?php echo $val ?></option>';
+                $parseStr   .= '<?php }else { ?><option value="<?php echo $_key ?>"><?php echo $val ?></option>';
                 $parseStr   .= '<?php } ?>';
             }else {
-                $parseStr   .= '<option value="<?php echo $key ?>"><?php echo $val ?></option>';
+                $parseStr   .= '<option value="<?php echo $_key ?>"><?php echo $val ?></option>';
             }
             $parseStr   .= '<?php } ?>';
         }else if(!empty($values)) {

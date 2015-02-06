@@ -1,0 +1,60 @@
+<div class="contentArea">
+    <div class="Item hr">
+        <div id="sub_name" class="current">{$title|default=''}数据导入</div>
+    </div>
+    <form id="upfileform" name="upfileform" method="POST" action="__MOD__&act={$import_act|default=import}" enctype="multipart/form-data">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+        <notempty  name="has_separator">
+        <tr>
+            <th width="80">字段分隔符：</th>
+            <td>
+                <select name="col_separator">
+                <option selected="selected" value="0">制表符(Tab)</option>
+                <option value="1">逗号</option>
+                </select>
+            </td>
+        </tr>
+        </notempty>   
+        
+        <notempty  name="has_charset">
+        <tr>
+            <th width="80">文件编码：</th>
+            <td>
+                <select name="charset">
+                <option selected="selected" value="GB2312">GB2312</option>
+                <option value="UTF-8">UTF-8</option>
+                </select>
+            </td>
+        </tr>
+        </notempty>
+
+        <notempty name="has_import_ext">
+            <include file="inc_import_ext" />
+        </notempty>
+ 
+        <notempty  name="import_tpl_url">
+        <tr>
+            <th width="80">模板下载：</th>
+            <td>
+                <a href="{$import_tpl_url}" target="_blank">导入模板</a>
+            </td>
+        </tr>
+        </notempty>
+
+        <tr>
+            <th width="80">数据文件：</th>
+            <td>
+                <input name='upfile' id='upfile' type='file' size='50' style="ime-mode:disabled" />
+                <input type='hidden' id='MAX_FILE_SIZE' name='MAX_FILE_SIZE' value='100000'/>
+            </td>
+        </tr>
+
+    </table>
+    <div class="commonBtnArea" >
+    <input type="submit" class="btn submit" value="上传" />
+    </div>
+    </form>
+    
+    
+</div>
+

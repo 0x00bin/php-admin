@@ -33,14 +33,19 @@ class File {
      */
     public function write($log,$destination='') {
         $now = date($this->config['log_time_format']);
-        if(empty($destination))
+        if(empty($destination)) {
             $destination = $this->config['log_path'].date('y_m_d').'.log';
-        if(!is_dir($this->config['log_path'])) {
-            mkdir($this->config['log_path'],0755,true);
-        }        
+
+            if(!empty($this->config['log_path']) && !is_dir($this->config['log_path'])) {
+                mkdir($this->config['log_path'],0755,true);
+            }
+        }
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
         if(is_file($destination) && floor($this->config['log_file_size']) <= filesize($destination) )
               rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-        error_log("[{$now}] ".$_SERVER['REMOTE_ADDR'].' '.$_SERVER['REQUEST_URI']."\r\n{$log}\r\n", 3,$destination);
+
+        $REMOTE_ADDR = isset($_SERVER['REMOTE_ADDR'])? $_SERVER['REMOTE_ADDR']:"127.0.0.1";
+        $REQUEST_URI = isset($_SERVER['REQUEST_URI'])? $_SERVER['REQUEST_URI']:"";
+        error_log("[{$now}] ".$REMOTE_ADDR.' '.$REQUEST_URI."\r\n{$log}\r\n", 3,$destination);
     }
 }

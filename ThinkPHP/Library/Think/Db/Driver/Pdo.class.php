@@ -12,7 +12,7 @@ namespace Think\Db\Driver;
 use Think\Db;
 defined('THINK_PATH') or exit();
 /**
- * PDO数据库驱动 
+ * PDO数据库驱动
  */
 class Pdo extends Db{
 
@@ -30,7 +30,7 @@ class Pdo extends Db{
             if(empty($this->config['params'])) {
                 $this->config['params'] =   array();
             }
-            $this->dbType = $this->_getDsnType($config['dsn']);            
+            $this->dbType = $this->_getDsnType($config['dsn']);
         }
 
     }
@@ -90,7 +90,7 @@ class Pdo extends Db{
         $this->queryStr = $str;
         if(!empty($bind)){
             $this->queryStr     .=   '[ '.print_r($bind,true).' ]';
-        }        
+        }
         //释放前次的查询结果
         if ( !empty($this->PDOStatement) ) $this->free();
         N('db_query',1);
@@ -124,7 +124,7 @@ class Pdo extends Db{
         $this->queryStr = $str;
         if(!empty($bind)){
             $this->queryStr     .=   '[ '.print_r($bind,true).' ]';
-        }        
+        }
         $flag = false;
         if($this->dbType == 'OCI') {
             if(preg_match("/^\s*(INSERT\s+INTO)\s+(\w+)\s+/i", $this->queryStr, $match)) {
@@ -142,7 +142,7 @@ class Pdo extends Db{
             E($this->error());
         }
         // 参数绑定
-        $this->bindPdoParam($bind);        
+        $this->bindPdoParam($bind);
         $result = $this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
@@ -171,7 +171,7 @@ class Pdo extends Db{
               $val  = array($key,$val);
             }
             call_user_func_array(array($this->PDOStatement,'bindValue'),$val);
-        }      
+        }
     }
 
     /**
@@ -393,7 +393,7 @@ class Pdo extends Db{
             if(!preg_match('/[,\'\"\*\(\)`.\s]/',$key)) {
                $key = '`'.$key.'`';
             }
-            return $key;            
+            return $key;
         }else{
             return parent::parseKey($key);
         }
@@ -440,8 +440,8 @@ class Pdo extends Db{
             case 'SQLSRV':
             case 'MYSQL':
                 return addslashes($str);
-            case 'PGSQL':                
-            case 'IBASE':                
+            case 'PGSQL':
+            case 'IBASE':
             case 'SQLITE':
             case 'ORACLE':
             case 'OCI':

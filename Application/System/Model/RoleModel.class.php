@@ -23,10 +23,8 @@ class RoleModel extends \Libs\Framework\Model {
 
     protected $_auto = array(
         // description
-        array('description', 'htmlspecialchars', 3, 'function'),
+        array('remark', 'htmlspecialchars', 3, 'function'),
         // 创建时间
-        array('created', 'time', 1, 'function'),
-        // 更新时间
-        array('updated', 'time', 3, 'function')
+        array('created', 'date', 1, 'function', 'Y-m-d H:i:s'),
     );
 }

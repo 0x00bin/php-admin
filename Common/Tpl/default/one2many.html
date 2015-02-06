@@ -1,0 +1,54 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td width="40%" valign="top">
+            <include file="list.html" />
+        </td>
+        <td width="5%" align="middle">
+            <input type="submit" id="add"   class="mybtn" value="<<添加" />
+            <input type="submit" id="remove" class="mybtn" value="移除>>" />
+        </td>
+        <td width="40%" valign="top">
+            <assign name="table_suffix" value="1" />
+            <include file="list.html" />
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+var one_id = {$vo.id|default=0};
+jQuery(document).ready (
+
+    function() {
+        $("#add").click(function(){
+            var id = [];
+            $("#tab1 tbody input[type='checkbox']").each(function() {
+                if ($(this).prop("checked")) {
+                    id.push($(this).prop("id").split("_")[1]);
+                }
+            });
+            if (id.length == 0) {
+                popup.alert('至少选择一条记录!','信息提示');
+                return;
+            }
+            ajax_submit(URL+"&act=manage&oper=add&one_id="+one_id+"&many_id="+id.join(","));
+        });
+
+
+        $("#remove").click(function(){
+            var id = [];
+            $("#tab0 tbody input[type='checkbox']").each(function() {
+                if ($(this).prop("checked")) {
+                    id.push($(this).prop("id").split("_")[1]);
+                }
+            });
+
+            if (id.length == 0) {
+                popup.alert('至少选择一条记录!','信息提示');
+                return;
+            }
+            ajax_submit(URL+"&act=manage&oper=remove&one_id="+one_id+"&many_id="+id.join(","));
+        });
+    }
+);
+</script>
+

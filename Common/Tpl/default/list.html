@@ -1,0 +1,114 @@
+<php>
+    $table_suffix = isset($table_suffix)? $table_suffix:"0";
+    $table = $tables[$table_suffix];
+    $list  = $lists[$table_suffix]['list'];
+    $count = $lists[$table_suffix]['count'];
+    $page  = $lists[$table_suffix]['page'];
+</php>
+<div class="Item hr">
+    <if condition="$table['conf']['count'] == true">
+        <span class="fr">共有<b>{$count}</b>条数据</span>
+    </if>
+
+    <div id="sub_name" class="current">{$table.caption}列表</div>
+</div>
+<form>
+    <table width="{$table.width|default='100%'}" border="0" cellspacing="0" cellpadding="0" class="tab" id="tab{$table_suffix}" >
+        <thead>
+            <tr>
+                <notempty name="table.checkbox">
+                    <th><input type="checkbox" id="chkall{$table_suffix}" /></th>
+                </notempty>
+
+                <volist name="table.columns" id="column">
+                    <if condition="!isset($column['list']) || $column['list'] neq 'null'">
+                    <th>{$column.label}</th>
+                    </if>
+                </volist>
+                <notempty name="table.oper">
+                    <th>操作</th>
+                </notempty>
+            </tr>
+        </thead>
+        <tbody>
+            <volist name="list" id="data">
+            <tr align="center" id="row{$table_suffix}_{$data.id}">
+                <notempty name="table.checkbox">
+                    <td><input type="checkbox" id="chk{$table_suffix}_{$data.id}"/></td>
+                </notempty>
+
+                <volist name="table.columns" id="column">
+                    <if condition="!isset($column['list']) || $column['list'] neq 'null'">
+                    <td id="column{$table_suffix}_{$key}_{$data.id}">
+                        <php>
+                            if (isset($column['dictionary']))  {
+                                $dicitonary = $$column['dictionary'];
+                                if (isset($dicitonary[$data[$key]])) {
+                                    echo $dicitonary[$data[$key]];
+                                } else {
+                                    if (isset($column['dictionary2']))  {
+                                        $dicitonary2 = $$column['dictionary2'];
+                                        if (isset($dicitonary2[$data[$key]])) {
+                                            echo $dicitonary2[$data[$key]];
+                                        } else {
+                                            echo $data[$key];
+                                        }
+                                    }
+                                }
+                            } else {
+                                echo $data[$key];
+                            }
+                        </php>
+                    </td>
+                    </if>
+                </volist>
+
+                <notempty name="table.oper">
+                    <td>
+                    <volist name="table.oper" id="oper">
+                        <if condition="isset($oper['condition']) && !strcompare($oper['condition'], $data)">
+                            <php>continue;</php>
+                        </if>
+                        <if condition="is_array($oper)">
+                            <php>
+                                $extparam = isset($oper['param'])? $oper['param']:"";
+                                $params = array();
+                                if (isset($oper['cols'])) {
+                                    $cols = explode(",", $oper['cols']);
+                                    foreach($cols as $col) {
+                                        if (strpos($col, ":") !== false) {
+                                            list($oldcol, $newcol) = explode(":", $col);
+                                            $params[$newcol] = $data[$oldcol];
+                                        } else {
+                                            $params[$col] = $data[$col];
+                                        }
+                                    }
+                                }
+
+                                $params = json_encode($params);
+                            </php>
+                            <span style="cursor:pointer" onclick='{$oper['oper']}("{$key}", {$params|default=null}, "{$extparam}")'>{$oper.label}</span>&nbsp;
+                        <else />
+                            <span style="cursor:pointer" onclick="do{$key}({$data.id})">{$oper}</span>&nbsp;
+                        </if>
+                    </volist>
+                    </td>
+                </notempty>
+            </tr>
+            </volist>
+        </tbody>
+    </table>
+</form>
+<if condition="$table['conf']['page'] == true">
+<div class="page">
+    {$page}
+</div>
+</if>
+<script type="text/javascript">
+
+jQuery(document).ready (
+    function() {
+        oncheckbox("chkall{$table_suffix}", "tab{$table_suffix}");
+    }
+);
+</script>

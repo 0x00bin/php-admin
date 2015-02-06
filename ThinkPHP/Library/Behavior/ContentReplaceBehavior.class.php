@@ -33,10 +33,12 @@ class ContentReplaceBehavior {
             '__MODULE__'    =>  __MODULE__,
             '__ACTION__'    =>  __ACTION__,     // 当前操作地址
             '__SELF__'      =>  __SELF__,       // 当前页面地址
-            '__CONTROLLER__'=>  __CONTROLLER__,
-            '__URL__'       =>  __CONTROLLER__,
+            '__CONTROLLER__'=>  __CONTROLLER__,            
+            '__MOD__'       =>  __APP__ . '?app=' . APP_NAME . '&mod=' . MOD_NAME,
+            '__URL__'       =>  U(APP_NAME . '/' . MOD_NAME . '/' . ACT_NAME),
             '__PUBLIC__'    =>  __ROOT__.'/Public',// 站点公共目录
         );
+        
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) )
             $replace =  array_merge($replace,C('TMPL_PARSE_STRING'));

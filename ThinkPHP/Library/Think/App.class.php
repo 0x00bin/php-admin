@@ -25,7 +25,7 @@ class App {
 
         // 定义当前请求的系统常量
         define('NOW_TIME',      $_SERVER['REQUEST_TIME']);
-        define('REQUEST_METHOD',$_SERVER['REQUEST_METHOD']);
+        define('REQUEST_METHOD',isset($_SERVER['REQUEST_METHOD'])? $_SERVER['REQUEST_METHOD']:"GET");
         define('IS_GET',        REQUEST_METHOD =='GET' ? true : false);
         define('IS_POST',       REQUEST_METHOD =='POST' ? true : false);
         define('IS_PUT',        REQUEST_METHOD =='PUT' ? true : false);

@@ -5,46 +5,7 @@ namespace System\Service;
  * RoleService
  */
 class RoleService extends \Libs\Framework\Service {
-    /**
-     * 添加角色
-     * @param  array $role 角色信息
-     * @return array
-     */
-    public function addRole($role) {
-        $Role = $this->getD();
 
-        if (false === ($role = $Role->create($role))) {
-            return $this->error($Role->getError());
-        }
-
-        if (false === $Role->add($role)) {
-            return $this->error('系统错误！');
-        }
-
-        return $this->resultReturn(true);
-    }
-
-    /**
-     * 更新角色信息
-     * @return
-     */
-    public function updateRole($role) {
-        $Role = $this->getD();
-
-        if (false === ($role = $Role->create($role))) {
-            return $this->error($Role->getError());
-        }
-
-        if ($role['id'] == $role['pid']) {
-            $role['pid'] = 0;
-        }
-
-        if (false === $Role->save($role)) {
-            return $this->error('系统错误！');
-        }
-
-        return $this->resultReturn(true);
-    }
 
     /**
      * 分配角色权限
@@ -59,7 +20,7 @@ class RoleService extends \Libs\Framework\Service {
         $Access->where("role_id={$roleId}")->delete();
         if (0 === count($access)) {
             $Access->commit();
-            return $this->resultReturn(true, '清楚数据成功！');
+            return $this->message('清除数据成功！');
         }
 
         $newAccess = array();
@@ -76,14 +37,6 @@ class RoleService extends \Libs\Framework\Service {
 
         $Access->commit();
         return $this->success(true);
-    }
-
-    /**
-     * 得到带有层级的role数据
-     * @return array
-     */
-    public function getRole() {
-        return $this->_model->select();
     }
 
     /**
@@ -105,18 +58,5 @@ class RoleService extends \Libs\Framework\Service {
         }
 
         return $sids;
-    }
-
-    /**
-     * 是否存在角色
-     * @param  int     $id 角色id
-     * @return boolean
-     */
-    public function existRole($id) {
-        return !is_null($this->getM()->getById($id));
-    }
-
-    protected function getModelName() {
-        return 'Role';
     }
 }

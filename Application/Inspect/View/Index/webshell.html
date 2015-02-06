@@ -1,0 +1,60 @@
+<div class="contentArea">
+    <div class="Item hr">
+        <div id="sub_name" class="current">WebShell</div>
+    </div>
+    <form>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+        <tr>
+            <th width="80">设备：</th>
+            <td>
+                <html:select id="device_id" name="device_id" options="devices" selected="" />
+            </td>
+        </tr>    
+        <tr>
+            <th width="80">命令：</th>
+            <td>
+                <input id="cmd" name="cmd" type="text" class="input" size="30" value="" onkeydown="onEnterDoCmd(event)"/>
+            </td>
+        </tr>
+
+         <tr>
+            <th width="80">结果：</th>
+            <td>
+                <span id="result"></span>
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+function docmd () {
+    if($("#cmd").val() == ''){
+        popup.alert("请输入要执行的命令", "操作提示", function() {
+            $("#cmd").focus();
+        });
+        return false;
+    }
+
+    var url = MOD + "&act=docmd&device_id="+$("#device_id").val()+"&cmd=" + $("#cmd").val();
+    ajax_submit(url, false, function(data) {
+        if (data.status != 1) {
+		popup.error(data.info);
+                setTimeout(function(){
+                    popup.close("asyncbox_error");
+                },2000);
+		return;
+	}
+	$("#result").html(data.info.replace(/\n/g, "<br />"));
+    });
+}
+
+function onEnterDoCmd(e) {
+    if (e.keyCode == 13) {
+        e.returnValue=false;
+        e.cancel = true;
+        docmd();
+    }
+    return false;
+}
+</script>

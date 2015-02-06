@@ -12,7 +12,7 @@ define('MINIFY_MIN_DIR', dirname(__FILE__));
 
 $webPath=  str_replace("/Public/Min/index.php", "", $_SERVER['SCRIPT_NAME']);
 
-define('MIN_CACHE_DIR', $_SERVER['DOCUMENT_ROOT'] . RUNTIME_PATH . "MinFiles/");
+define('MIN_CACHE_DIR', $_SERVER['DOCUMENT_ROOT'] . $webPath . "/Runtime/MinFiles/");
 
 
 function makeDir($path) {

@@ -12,26 +12,16 @@ class UserService extends \Libs\Framework\Service {
      * @param  array $user 用户信息
      * @return array
      */
-    public function add($data) {
-        $this->_model->startTrans();
+    public function add($data, $option=array()) {
         if (false === ($data = $this->_model->create($data))) {
             return $this->error($this->_model->getError());
         }
-        $user_id = $this->_model->add($data);
+
+        unset($data['cfm_password']);
+        $user_id = parent::_add($data, $option);
         if ($user_id === false) {
-            return $this->error("系统出错了, DB:". $this->_model->getDbError());
+            return $this->error("系统出错了, DB:". $this->_model->getError());
         }
-
-        $role_user = array(
-            'role_id' => $data['role_id'],
-            'user_id' => $user_id,
-        );
-        if (false === $this->_model->setTableName('role_user')->add($role_user) ) {
-            $this->_model->rollback();
-            return $this->error("系统出错了, DB:". $this->_model->getDbError());
-        }
-        $this->_model->commit();
-
         return $this->success();
     }
 
@@ -39,7 +29,7 @@ class UserService extends \Libs\Framework\Service {
      * 更新用户信息
      * @return
      */
-    public function update($data) {
+    public function save($data, $option=array()) {
         if (false === ($data = $this->_model->create($data))) {
             return $this->error($this->_model->getError());
         }
@@ -48,12 +38,11 @@ class UserService extends \Libs\Framework\Service {
             unset($data['password']);
         }
 
-        if (false === $this->_model->save($data)) {
+        unset($data['cfm_password']);
+
+        if (false === parent::_save($data, $option)) {
             return $this->error("系统出错了, DB:". $this->_model->getDbError());
         }
-
-        M('RoleUser')->where("user_id={$data['id']}")
-                      ->save(array('role_id' => $data['role_id']));
 
         return $this->success();
     }
@@ -73,7 +62,7 @@ class UserService extends \Libs\Framework\Service {
             return $this->error('密码不正确！');
         }
 
-        if ($data['is_active'] == 0) {
+        if ($data['status'] == 0) {
             return $this->error('账户已被禁用！');
         }
 
@@ -93,7 +82,7 @@ class UserService extends \Libs\Framework\Service {
         }
 
         // 更新最后登录时间
-        $this->_model->where("id={$data['id']}")->save(array('last_login' => $time));
+        $this->_model->where("id={$data['id']}")->save(array('last_login' => date("Y-m-d H:i:s")));
 
         return $this->success(true);
     }
@@ -135,9 +124,5 @@ class UserService extends \Libs\Framework\Service {
      */
     public function encrypt($str) {
         return md5(C('AUTH_MASK') . md5($str));
-    }
-
-    public function getRoleUser() {
-        return $this->_model->setTableName('role_user')->select();
     }
 }

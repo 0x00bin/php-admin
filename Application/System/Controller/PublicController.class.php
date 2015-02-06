@@ -6,6 +6,19 @@ namespace System\Controller;
  * 公开页面访问接口
  */
 class PublicController extends \Libs\Framework\Controller {
+
+   /**
+    * 初始化
+    * @return
+    */
+    public function _initialize() {
+        // 登录后不可访问的action
+        $filterAction = array('index', 'login');
+        if (in_array(ACTION_NAME, $filterAction) && $this->isLogin()) {
+            return $this->redirect('/');
+        }
+    }
+
     /**
      * 管理员登录页
      * @return
@@ -36,13 +49,13 @@ class PublicController extends \Libs\Framework\Controller {
             return $this->error('验证码不正确！');
         }*/
 
-        $user_service = D('User', 'Service');
+        $service = D('System/User', 'Service');
         // 登录认证
-        if (!$user_service->login($username, $password) ) {
-            return $this->error($user_service->getError());
+        if (!$service->login($username, $password) ) {
+            return $this->error($service->getError());
         }
 
-        return $this->success('登录成功！', U('Index/index'));
+        return $this->success('登录成功！', $this->getBackurl(U('System/Index/index')));
     }
 
     /**
@@ -50,9 +63,9 @@ class PublicController extends \Libs\Framework\Controller {
      * @return
      */
     public function logout() {
-        D('User', 'Service')->logout();
+        D('System/User', 'Service')->logout();
 
-        $this->success('登出成功！', U('Public/index'));
+        $this->success('登出成功！', U('System/Public/index'));
     }
 
 

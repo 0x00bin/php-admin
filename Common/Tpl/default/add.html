@@ -1,0 +1,54 @@
+<div class="contentArea">
+    <div class="Item hr">
+        <div id="sub_name" class="current">{$act_name|default='添加'}{$table.caption}</div>
+    </div>
+    <form>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+            <volist name="table.columns" id="column">
+                 <if condition="$key eq 'id' or $column['input'] eq 'hidden'">
+                    <input type="hidden" name="data[{$key}]" value="{$vo[$key]|default=''}" />
+                 <elseif condition="$column['input'] eq 'null'"/>
+                 <else/>
+                 <tr id="tr_{$key}">
+                    <th width="80">{$column.label}：</th>
+                    <td>
+                    <switch name="column.input">
+                        <case value="password">
+                            <input id="{$key}" class="input" name="data[{$key}]" type="password" placeholder="{$column.placeholder|default=''}" />
+                        </case>
+                        <case value="textarea">
+                            <textarea id="{$key}" class="jq_watermark" rows = "5" cols="68" name="data[{$key}]" placeholder="{$column.placeholder|default=''}">{$vo[$key]|default=''}</textarea>
+                        </case>
+                        <case value="select">
+                            <html:select id="$key" name="data[$key]" options="$column['dictionary']" selected="vo[$key]" />
+                        </case>
+
+                        <case value="datetime">
+                            <input type="text" id="{$key}" value="{$vo[$key]|default=''}" name="data[{$key}]" class="input" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                        </case>
+                        <case value="date">
+                            <input type="text" id="{$key}" value="{$vo[$key]|default=''}" name="data[{$key}]" class="input" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
+                        </case>
+                        <case value="time">
+                            <input type="text" id="{$key}" value="{$vo[$key]|default=''}" name="data[{$key}]" class="input" onclick="WdatePicker({dateFmt:'HH:mm:ss'})"/>
+                        </case>
+                        <default /><input id="{$key}" name="data[{$key}]" type="text" class="input" size="{$column.size|default=30}" value="{$vo[$key]|default=''}" placeholder="{$column.placeholder|default=''}" />
+                    </switch>
+                    </td>
+                </tr>
+                </if>
+            </volist>
+        </table>
+        <input type="hidden" id="backurl" name="backurl" value="{$backurl|default=''}" />
+    </form>
+    <div class="commonBtnArea" >
+        <button class="btn submit">提交</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(".submit").click(function(){
+    ajax_submit('__MOD__&act={$act|default=save}');
+    return false;
+});
+</script>

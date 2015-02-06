@@ -48,7 +48,7 @@ class  Template {
         return str_replace(
             array('{','}','(',')','|','[',']','-','+','*','.','^','?'),
             array('\{','\}','\(','\)','\|','\[','\]','\-','\+','\*','\.','\^','\?'),
-            $str);        
+            $str);
     }
 
     // 模板变量获取和设置
@@ -99,12 +99,17 @@ class  Template {
         // 判断是否启用布局
         if(C('LAYOUT_ON')) {
             if(false !== strpos($tmplContent,'{__NOLAYOUT__}')) { // 可以单独定义不使用布局
+
                 $tmplContent = str_replace('{__NOLAYOUT__}','',$tmplContent);
             }else{ // 替换布局的主体内容
                 $layoutFile  =  THEME_PATH.C('LAYOUT_NAME').$this->config['template_suffix'];
+                if (!is_file($layoutFile)) { // 全局layout使用
+                    $layoutFile = TPL_PATH . C('LAYOUT_NAME') . $this->config['template_suffix'];
+                }
                 $tmplContent = str_replace($this->config['layout_item'],$tmplContent,file_get_contents($layoutFile));
             }
         }
+
         // 编译模板内容
         $tmplContent =  $this->compiler($tmplContent);
         Storage::put($tmplCacheFile,trim($tmplContent),'tpl');
@@ -240,7 +245,7 @@ class  Template {
     // 解析模板中的extend标签
     protected function parseExtend($content) {
         $begin      =   $this->config['taglib_begin'];
-        $end        =   $this->config['taglib_end'];        
+        $end        =   $this->config['taglib_end'];
         // 读取模板中的继承标签
         $find       =   preg_match('/'.$begin.'extend\s(.+?)\s*?\/'.$end.'/is',$content,$matches);
         if($find) {
@@ -255,7 +260,7 @@ class  Template {
             // 替换block标签
             $content = $this->replaceBlock($content);
         }else{
-            $content    =   preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', function($match){return stripslashes($match[2]);}, $content);            
+            $content    =   preg_replace_callback('/'.$begin.'block\sname=[\'"](.+?)[\'"]\s*?'.$end.'(.*?)'.$begin.'\/block'.$end.'/is', function($match){return stripslashes($match[2]);}, $content);
         }
         return $content;
     }
@@ -389,7 +394,7 @@ class  Template {
             $className  =   $tagLib;
             $tagLib     =   substr($tagLib,strrpos($tagLib,'\\')+1);
         }else{
-            $className  =   'Think\\Template\TagLib\\'.ucwords($tagLib);            
+            $className  =   'Think\\Template\TagLib\\'.ucwords($tagLib);
         }
         $tLib       =   \Think\Think::instance($className);
         $that       =   $this;
@@ -679,22 +684,26 @@ class  Template {
      * @access private
      * @param string $tmplPublicName  模板文件名
      * @return string
-     */    
+     */
     private function parseTemplateName($templateName){
         if(substr($templateName,0,1)=='$')
             //支持加载变量文件名
             $templateName = $this->get(substr($templateName,1));
         $array  =   explode(',',$templateName);
-        $parseStr   =   ''; 
+        $parseStr   =   '';
         foreach ($array as $templateName){
             if(empty($templateName)) continue;
+
             if(false === strpos($templateName,$this->config['template_suffix'])) {
                 // 解析规则为 模块@主题/控制器/操作
                 $templateName   =   T($templateName);
+            }
+            if (!is_file($templateName)) {
+                $templateName = TPL_PATH . $templateName;
             }
             // 获取模板文件内容
             $parseStr .= file_get_contents($templateName);
         }
         return $parseStr;
-    }    
+    }
 }

@@ -1,0 +1,19 @@
+<div class="menu">
+    <ul>
+        <volist name="main_menu" id="menu_item" key="i">
+            <if condition="$i eq 1">
+                <li id="{:targetToID($menu_item['target'])}" class="first {:activedLink($key, null, 'first_current')}">
+                	<span><a href="{:U($menu_item['target'])}">{$menu_item['name']}</a></span>
+                </li>
+            <elseif condition="$i eq count($main_menu)" />
+                <li id="{:targetToID($menu_item['target'])}" class="end {:activedLink($key, null, 'end_current')}">
+                	<span><a href="{:U($menu_item['target'])}">{$menu_item['name']}</a></span>
+                </li>
+            <else />
+                <li id="{:targetToID($menu_item['target'])}" class="{:activedLink($key, null, 'current')}">
+                	<span><a href="{:U($menu_item['target'])}">{$menu_item['name']}</a></span>
+                </li>
+            </if>
+        </volist>
+    </ul>
+</div>

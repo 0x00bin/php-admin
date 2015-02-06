@@ -17,14 +17,14 @@ class View {
      * 模板输出变量
      * @var tVar
      * @access protected
-     */ 
+     */
     protected $tVar     =   array();
 
     /**
      * 模板主题
      * @var theme
      * @access protected
-     */ 
+     */
     protected $theme    =   '';
 
     /**
@@ -90,7 +90,7 @@ class View {
         // 网页字符编码
         header('Content-Type:'.$contentType.'; charset='.$charset);
         header('Cache-control: '.C('HTTP_CACHE_CONTROL'));  // 页面缓存控制
-        header('X-Powered-By:ThinkPHP');
+        //header('X-Powered-By:ThinkPHP');
         // 输出模板文件
         echo $content;
     }
@@ -138,6 +138,10 @@ class View {
      * @return string
      */
     public function parseTemplate($template='') {
+        if(false !== strpos($template, "html")) {
+            $template = TPL_PATH . $template;
+        }
+
         if(is_file($template)) {
             return $template;
         }
@@ -151,6 +155,7 @@ class View {
         if(strpos($template,'@')){ // 跨模块调用模版文件
             list($module,$template)  =   explode('@',$template);
         }
+
         // 获取当前主题的模版路径
         if(!defined('THEME_PATH')){
             if(C('VIEW_PATH')){ // 模块设置独立的视图目录
